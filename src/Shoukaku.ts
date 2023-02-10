@@ -265,15 +265,8 @@ export class Shoukaku extends EventEmitter {
     private getIdeal(group: string|string[]): Node|undefined {
         const nodes = [ ...this.nodes.values() ]
             .filter(node => node.state === State.CONNECTED);
-        if (group === 'auto') {
-            return nodes
-                .sort((a, b) => a.penalties - b.penalties)
-                .shift();
-        }
-        return nodes
-            .filter(node => node.group && group.includes(node.group))
-            .sort((a, b) => a.penalties - b.penalties)
-            .shift();
+       
+        return nodes[Math.floor(Math.random() * nodes.length))
     }
 
     /**
