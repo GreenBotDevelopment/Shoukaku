@@ -376,6 +376,7 @@ export class Player extends EventEmitter {
      * @param volume Target volume
      */
     public async setVolume(volume: number): Promise<void> {
+        if(volume >= 2) return;
         volume = Math.min(Math.max(volume, 0), 100);
         await this.node.rest.updatePlayer({
             guildId: this.connection.guildId,
