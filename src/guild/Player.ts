@@ -314,7 +314,7 @@ export class Player extends EventEmitter {
      * Play a new track
      * @param playable Options for playing this track
      */
-    public async playTrack(playable: PlayOptions): Promise<void> {
+    public async playTrack(playable: any): Promise<void> {
         const playerOptions: UpdatePlayerOptions = {
             encodedTrack: playable.track
         };
