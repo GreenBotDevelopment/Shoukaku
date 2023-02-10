@@ -314,7 +314,7 @@ export class Player extends EventEmitter {
      * Play a new track
      * @param playable Options for playing this track
      */
-    public async playTrack(playable: any): Promise<void> {
+    public async playTrack(playable: PlayOptions): Promise<void> {
         const playerOptions: UpdatePlayerOptions = {
             encodedTrack: playable.track
         };
@@ -511,7 +511,7 @@ export class Player extends EventEmitter {
      */
     public clearFilters(): Promise<void> {
         return this.setFilters({
-            volume: 0.4,
+            volume: 1,
             equalizer: [],
             karaoke: null,
             timescale: null,
