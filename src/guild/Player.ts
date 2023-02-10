@@ -511,7 +511,7 @@ export class Player extends EventEmitter {
      */
     public clearFilters(): Promise<void> {
         return this.setFilters({
-            volume: 100,
+            volume: 0.4,
             equalizer: [],
             karaoke: null,
             timescale: null,
