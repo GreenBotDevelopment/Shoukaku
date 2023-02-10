@@ -266,7 +266,7 @@ export class Shoukaku extends EventEmitter {
         const nodes = [ ...this.nodes.values() ]
             .filter(node => node.state === State.CONNECTED);
        
-        return nodes[Math.floor(Math.random() * nodes.length))
+        return nodes[Math.floor(Math.random() * nodes.length)]
     }
 
     /**
