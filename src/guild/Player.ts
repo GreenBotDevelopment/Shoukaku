@@ -314,20 +314,21 @@ export class Player extends EventEmitter {
      * Play a new track
      * @param playable Options for playing this track
      */
-    public async playTrack(playable: PlayOptions): Promise<void> {
+    public playTrack(playable: PlayOptions): void {
         const playerOptions: UpdatePlayerOptions = {
             encodedTrack: playable.track
         };
         if (playable.options) {
-            const { pause, startTime, endTime, volume } = playable.options;
+            const { pause, startTime, endTime } = playable.options;
             if (pause) playerOptions.paused = pause;
             if (startTime) playerOptions.position = startTime;
             if (endTime) playerOptions.endTime = endTime;
-            if (volume) playerOptions.volume = volume;
         }
-        await this.node.rest.updatePlayer({
+        playerOptions.volume = this.filters.volume;
+
+        this.node.sendPacket({
             guildId: this.connection.guildId,
-            noReplace: playable.options?.noReplace ?? false,
+            op: 'play',
             playerOptions
         });
         this.track = playable.track;
@@ -340,8 +341,9 @@ export class Player extends EventEmitter {
      * Stop the currently playing track
      */
     public async stopTrack(): Promise<void> {
-        await this.node.rest.updatePlayer({
+        await this.node.sendPacket({
             guildId: this.connection.guildId,
+            op: 'stop',
             playerOptions: { encodedTrack: null }
         });
         this.position = 0;
@@ -352,9 +354,10 @@ export class Player extends EventEmitter {
      * @param paused Boolean value to specify whether to pause or unpause the current bot user
      */
     public async setPaused(paused = true): Promise<void> {
-        await this.node.rest.updatePlayer({
+        await this.node.sendPacket({
             guildId: this.connection.guildId,
-            playerOptions: { paused }
+            op: 'pause',
+            pause: paused
         });
         this.paused = paused;
     }
