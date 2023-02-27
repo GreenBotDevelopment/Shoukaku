@@ -7,6 +7,11 @@ import { wait } from '../Utils';
 import { Rest } from './Rest';
 import Websocket from 'ws';
 
+
+export interface websocketPayload {
+
+
+}
 export interface VoiceChannelOptions {
     guildId: string;
     shardId: number;
@@ -267,6 +272,14 @@ export class Node extends EventEmitter {
         }
     }
 
+    public sendPacket(payload: websocketPayload){
+        const packet = JSON.stringify(payload);
+        if (!this.ws?.readyState) {
+            return console.log('[Lavalink WS] Can not send the websocket packet. Connection not ready');
+        }
+        this.ws?.send(packet);
+
+    }
     /**
      * Disconnect from connected voice channel
      * @param guildId ID of guild that contains voice channel

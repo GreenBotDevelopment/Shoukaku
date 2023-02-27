@@ -248,7 +248,7 @@ export class Shoukaku extends EventEmitter {
      * @returns A Lavalink node or undefined
      */
     public getNode(name: string|string[] = 'auto'): Node|undefined {
-        if (!this.nodes.size) return undefined
+        if (!this.nodes.size) return undefined;
         if (Array.isArray(name) || name === 'auto') return this.getIdeal(name);
         const node = this.nodes.get(name);
         if (!node) throw new Error('The node name you specified is not one of my nodes');
@@ -265,8 +265,8 @@ export class Shoukaku extends EventEmitter {
     private getIdeal(group: string|string[]): Node|undefined {
         const nodes = [ ...this.nodes.values() ]
             .filter(node => node.state === State.CONNECTED);
-       
-        return nodes[Math.floor(Math.random() * nodes.length)]
+
+        return nodes[Math.floor(Math.random() * nodes.length)];
     }
 
     /**
