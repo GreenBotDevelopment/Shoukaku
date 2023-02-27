@@ -329,7 +329,6 @@ export class Player extends EventEmitter {
             guildId: this.connection.guildId,
             op: 'play',
             track: playerOptions.encodedTrack,
-            volume: playerOptions.volume ||null,
             position: playerOptions.position ||null
         });
         this.track = playable.track;
