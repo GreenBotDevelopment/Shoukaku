@@ -344,7 +344,6 @@ export class Player extends EventEmitter {
         await this.node.sendPacket({
             guildId: this.connection.guildId,
             op: 'stop',
-            playerOptions: { encodedTrack: null }
         });
         this.position = 0;
     }
@@ -367,9 +366,10 @@ export class Player extends EventEmitter {
      * @param position Position to seek to in milliseconds
      */
     public async seekTo(position: number): Promise<void> {
-        await this.node.rest.updatePlayer({
+        await this.node.sendPacket({
             guildId: this.connection.guildId,
-            playerOptions: { position }
+            position: position,
+            op: 'seek'
         });
         this.position = position;
     }
@@ -381,9 +381,10 @@ export class Player extends EventEmitter {
     public async setVolume(volume: number): Promise<void> {
         if(volume >= 2) return;
         volume = Math.min(Math.max(volume, 0), 100);
-        await this.node.rest.updatePlayer({
+        await this.node.sendPacket({
             guildId: this.connection.guildId,
-            playerOptions: { filters: { volume }}
+            op: 'volume',
+            volume: volume,
         });
         this.filters.volume = volume;
     }
