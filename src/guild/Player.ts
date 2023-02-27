@@ -324,7 +324,7 @@ export class Player extends EventEmitter {
             if (startTime) playerOptions.position = startTime;
             if (endTime) playerOptions.endTime = endTime;
         }
-        playerOptions.volume = this.filters.volume;
+        playerOptions.volume = this.filters.volume || 0.40;
 
         this.node.sendPacket({
             guildId: this.connection.guildId,
