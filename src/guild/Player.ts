@@ -325,11 +325,15 @@ export class Player extends EventEmitter {
             if (endTime) playerOptions.endTime = endTime;
             if(volume) playerOptions.volume =  volume;
         }
-        this.node.sendPacket({
+        this.node.sendPacket(playerOptions.position ? {
             guildId: this.connection.guildId,
             op: 'play',
             track: playerOptions.encodedTrack,
-            position: playerOptions.position ||null
+            position: playerOptions.position
+        } : {
+            guildId: this.connection.guildId,
+            op: 'play',
+            track: playerOptions.encodedTrack,
         });
         this.track = playable.track;
         if (playerOptions.paused) this.paused = playerOptions.paused;
