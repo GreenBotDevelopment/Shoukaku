@@ -319,12 +319,12 @@ export class Player extends EventEmitter {
             encodedTrack: playable.track
         };
         if (playable.options) {
-            const { pause, startTime, endTime } = playable.options;
+            const { pause, startTime, endTime, volume } = playable.options;
             if (pause) playerOptions.paused = pause;
             if (startTime) playerOptions.position = startTime;
             if (endTime) playerOptions.endTime = endTime;
+            if (volume) playerOptions.volume = volume;
         }
-        playerOptions.volume = this.filters.volume || 0.40;
 
         this.node.sendPacket({
             guildId: this.connection.guildId,
