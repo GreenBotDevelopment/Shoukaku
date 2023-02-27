@@ -323,7 +323,7 @@ export class Player extends EventEmitter {
             if (pause) playerOptions.paused = pause;
             if (startTime) playerOptions.position = startTime;
             if (endTime) playerOptions.endTime = endTime;
-            if (volume) playerOptions.volume = volume;
+            if(volume) playerOptions.volume =  volume;
         }
 
         this.node.sendPacket({
