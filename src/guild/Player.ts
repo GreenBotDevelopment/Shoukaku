@@ -314,7 +314,7 @@ export class Player extends EventEmitter {
      * Play a new track
      * @param playable Options for playing this track
      */
-    public playTrack(playable: PlayOptions): void {
+    public playTrack(playable: any): void {
         const playerOptions: UpdatePlayerOptions = {
             encodedTrack: playable.track
         };
@@ -323,6 +323,7 @@ export class Player extends EventEmitter {
             if (pause) playerOptions.paused = pause;
             if (startTime) playerOptions.position = startTime;
             if (endTime) playerOptions.endTime = endTime;
+            if (volume) playerOptions.volume= volume;
         }
         this.node.sendPacket(playerOptions.volume ? {
             guildId: this.connection.guildId,
