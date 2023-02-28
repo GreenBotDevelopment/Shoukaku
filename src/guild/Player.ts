@@ -388,7 +388,7 @@ export class Player extends EventEmitter {
         this.node.sendPacket({
             guildId: this.connection.guildId,
             op: 'volume',
-            volume: volume,
+            volume: volume *100,
         });
     }
     /**
