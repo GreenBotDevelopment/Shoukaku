@@ -324,7 +324,12 @@ export class Player extends EventEmitter {
             if (startTime) playerOptions.position = startTime;
             if (endTime) playerOptions.endTime = endTime;
         }
-        this.node.sendPacket({
+        this.node.sendPacket(playerOptions.volume ? {
+            guildId: this.connection.guildId,
+            op: 'play',
+            track: playerOptions.encodedTrack,
+            volume: playerOptions.volume*100
+        }:{
             guildId: this.connection.guildId,
             op: 'play',
             track: playerOptions.encodedTrack,
@@ -338,8 +343,8 @@ export class Player extends EventEmitter {
     /**
      * Stop the currently playing track
      */
-    public async stopTrack(): Promise<void> {
-        await this.node.sendPacket({
+    public stopTrack():void {
+        this.node.sendPacket({
             guildId: this.connection.guildId,
             op: 'stop',
         });
@@ -350,13 +355,14 @@ export class Player extends EventEmitter {
      * Pause or unpause the currently playing track
      * @param paused Boolean value to specify whether to pause or unpause the current bot user
      */
-    public async setPaused(paused = true): Promise<void> {
-        await this.node.sendPacket({
+    public  setPaused(paused = true): void {
+        this.paused = paused;
+
+        this.node.sendPacket({
             guildId: this.connection.guildId,
             op: 'pause',
             pause: paused
         });
-        this.paused = paused;
     }
 
     /**
@@ -376,14 +382,13 @@ export class Player extends EventEmitter {
      * Change the volume of the currently playing track
      * @param volume Target volume
      */
-    public async setVolume(volume: number): Promise<void> {
-        if(volume >= 2) return;
-        volume = Math.min(Math.max(volume, 0), 100);
-        await this.node.rest.updatePlayer({
-            guildId: this.connection.guildId,
-            playerOptions: { filters: { volume }}
-        });
+    public setVolume(volume: number): void {
         this.filters.volume = volume;
+        this.node.sendPacket({
+            guildId: this.connection.guildId,
+            op: 'volume',
+            volume: volume,
+        });
     }
     /**
      * Change the equalizer settings applied to the currently playing track
