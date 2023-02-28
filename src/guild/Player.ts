@@ -323,14 +323,8 @@ export class Player extends EventEmitter {
             if (pause) playerOptions.paused = pause;
             if (startTime) playerOptions.position = startTime;
             if (endTime) playerOptions.endTime = endTime;
-            if(volume) playerOptions.volume =  volume;
         }
-        this.node.sendPacket(playerOptions.position ? {
-            guildId: this.connection.guildId,
-            op: 'play',
-            track: playerOptions.encodedTrack,
-            position: playerOptions.position
-        } : {
+        this.node.sendPacket({
             guildId: this.connection.guildId,
             op: 'play',
             track: playerOptions.encodedTrack,
@@ -385,14 +379,12 @@ export class Player extends EventEmitter {
     public async setVolume(volume: number): Promise<void> {
         if(volume >= 2) return;
         volume = Math.min(Math.max(volume, 0), 100);
-        await this.node.sendPacket({
+        await this.node.rest.updatePlayer({
             guildId: this.connection.guildId,
-            op: 'volume',
-            volume: volume,
+            playerOptions: { filters: { volume }}
         });
         this.filters.volume = volume;
     }
-
     /**
      * Change the equalizer settings applied to the currently playing track
      * @param equalizer An array of objects that conforms to the Bands type that define volumes at different frequencies
