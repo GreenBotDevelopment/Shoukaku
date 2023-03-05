@@ -385,10 +385,11 @@ export class Player extends EventEmitter {
      */
     public setVolume(volume: number): void {
         this.filters.volume = volume;
+        if(isNaN(volume)) return
         this.node.sendPacket({
             guildId: this.connection.guildId,
             op: 'volume',
-            volume: volume *100,
+            volume: Math.trunc(volume *100),
         });
     }
     /**
