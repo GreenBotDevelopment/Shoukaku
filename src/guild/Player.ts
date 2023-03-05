@@ -314,7 +314,7 @@ export class Player extends EventEmitter {
      * Play a new track
      * @param playable Options for playing this track
      */
-    public async playTrack(playable: PlayOptions): Promise<void> {
+    public async playTrack(playable: any): Promise<void> {
         const playerOptions: UpdatePlayerOptions = {
             encodedTrack: playable.track
         };
@@ -323,7 +323,7 @@ export class Player extends EventEmitter {
             if (pause) playerOptions.paused = pause;
             if (startTime) playerOptions.position = startTime;
             if (endTime) playerOptions.endTime = endTime;
-            if (volume) playerOptions.volume = volume;
+            if (volume) playerOptions.volume = volume*100;
         }
         await this.node.rest.updatePlayer({
             guildId: this.connection.guildId,
@@ -339,10 +339,10 @@ export class Player extends EventEmitter {
     /**
      * Stop the currently playing track
      */
-    public async stopTrack(): Promise<void> {
-        await this.node.rest.updatePlayer({
+    public stopTrack():void {
+        this.node.sendPacket({
             guildId: this.connection.guildId,
-            playerOptions: { encodedTrack: null }
+            op: 'stop',
         });
         this.position = 0;
     }
@@ -351,12 +351,14 @@ export class Player extends EventEmitter {
      * Pause or unpause the currently playing track
      * @param paused Boolean value to specify whether to pause or unpause the current bot user
      */
-    public async setPaused(paused = true): Promise<void> {
-        await this.node.rest.updatePlayer({
-            guildId: this.connection.guildId,
-            playerOptions: { paused }
-        });
+    public  setPaused(paused = true): void {
         this.paused = paused;
+
+        this.node.sendPacket({
+            guildId: this.connection.guildId,
+            op: 'pause',
+            pause: paused
+        });
     }
 
     /**
@@ -364,9 +366,10 @@ export class Player extends EventEmitter {
      * @param position Position to seek to in milliseconds
      */
     public async seekTo(position: number): Promise<void> {
-        await this.node.rest.updatePlayer({
+        await this.node.sendPacket({
             guildId: this.connection.guildId,
-            playerOptions: { position }
+            position: position,
+            op: 'seek'
         });
         this.position = position;
     }
@@ -375,15 +378,14 @@ export class Player extends EventEmitter {
      * Change the volume of the currently playing track
      * @param volume Target volume
      */
-    public async setVolume(volume: number): Promise<void> {
-        volume = Math.min(Math.max(volume, 0), 100);
-        await this.node.rest.updatePlayer({
-            guildId: this.connection.guildId,
-            playerOptions: { filters: { volume }}
-        });
+    public setVolume(volume: number): void {
         this.filters.volume = volume;
+        this.node.sendPacket({
+            guildId: this.connection.guildId,
+            op: 'volume',
+            volume: volume *100,
+        });
     }
-
     /**
      * Change the equalizer settings applied to the currently playing track
      * @param equalizer An array of objects that conforms to the Bands type that define volumes at different frequencies
@@ -510,7 +512,7 @@ export class Player extends EventEmitter {
      */
     public clearFilters(): Promise<void> {
         return this.setFilters({
-            volume: 100,
+            volume: 1,
             equalizer: [],
             karaoke: null,
             timescale: null,
