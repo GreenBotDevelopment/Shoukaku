@@ -314,7 +314,7 @@ export class Player extends EventEmitter {
      * Play a new track
      * @param playable Options for playing this track
      */
-    public async playTrack(playable: any): Promise<void> {
+    public playTrack(playable: any): void {
         const playerOptions: UpdatePlayerOptions = {
             encodedTrack: playable.track
         };
@@ -323,12 +323,17 @@ export class Player extends EventEmitter {
             if (pause) playerOptions.paused = pause;
             if (startTime) playerOptions.position = startTime;
             if (endTime) playerOptions.endTime = endTime;
-            if (volume) playerOptions.volume = volume*100;
+            if (volume) playerOptions.volume= volume;
         }
-        await this.node.rest.updatePlayer({
+        this.node.sendPacket(playerOptions.volume ? {
             guildId: this.connection.guildId,
-            noReplace: playable.options?.noReplace ?? false,
-            playerOptions
+            op: 'play',
+            track: playerOptions.encodedTrack,
+            volume: playerOptions.volume*100
+        }:{
+            guildId: this.connection.guildId,
+            op: 'play',
+            track: playerOptions.encodedTrack,
         });
         this.track = playable.track;
         if (playerOptions.paused) this.paused = playerOptions.paused;
