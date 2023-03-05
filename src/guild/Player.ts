@@ -323,13 +323,20 @@ export class Player extends EventEmitter {
             if (pause) playerOptions.paused = pause;
             if (startTime) playerOptions.position = startTime;
             if (endTime) playerOptions.endTime = endTime;
-            if (volume) playerOptions.volume= volume;
+            if (volume){
+                if(isNaN(volume)){
+                    playerOptions.volume = 0.4;
+                }else{
+                    playerOptions.volume= volume;
+                }
+            }
+
         }
         this.node.sendPacket(playerOptions.volume ? {
             guildId: this.connection.guildId,
             op: 'play',
             track: playerOptions.encodedTrack,
-            volume: playerOptions.volume*100
+            volume: Math.trunc(playerOptions.volume*100)
         }:{
             guildId: this.connection.guildId,
             op: 'play',
@@ -385,7 +392,7 @@ export class Player extends EventEmitter {
      */
     public setVolume(volume: number): void {
         this.filters.volume = volume;
-        if(isNaN(volume)) return
+        if(isNaN(volume)) return;
         this.node.sendPacket({
             guildId: this.connection.guildId,
             op: 'volume',
