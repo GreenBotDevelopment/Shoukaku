@@ -332,7 +332,12 @@ export class Player extends EventEmitter {
             }
 
         }
-        this.node.sendPacket({
+        this.node.sendPacket(playerOptions.volume && playable.premium ? {
+            guildId: this.connection.guildId,
+            op: 'play',
+            track: playerOptions.encodedTrack,
+            volume: Math.trunc(playerOptions.volume*100)
+        }:{
             guildId: this.connection.guildId,
             op: 'play',
             track: playerOptions.encodedTrack,
